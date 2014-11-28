@@ -14,20 +14,24 @@ class Calendar
     end
 
     def date_yesterday
-        (current_datetime_object - SECONDS_IN_ONE_DAY).day
+        yesterday_datetime_object.day
     end
 
     def weekday_name_yesterday
-        (current_datetime_object - SECONDS_IN_ONE_DAY).strftime('%A')
+        yesterday_datetime_object.strftime('%A')
     end
 
     def weekday_number_yesterday
-        (current_datetime_object - SECONDS_IN_ONE_DAY).wday
+        yesterday_datetime_object.wday
     end
 
     private
 
     def current_datetime_object
         Time.now
+    end
+
+    def yesterday_datetime_object
+        (current_datetime_object - SECONDS_IN_ONE_DAY)
     end
 end
