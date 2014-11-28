@@ -17,6 +17,14 @@ class Calendar
         (current_datetime_object - SECONDS_IN_ONE_DAY).day
     end
 
+    def weekday_name_yesterday
+        (current_datetime_object - SECONDS_IN_ONE_DAY).strftime('%A')
+    end
+
+    def weekday_number_yesterday
+        (current_datetime_object - SECONDS_IN_ONE_DAY).wday
+    end
+
     private
 
     def current_datetime_object
