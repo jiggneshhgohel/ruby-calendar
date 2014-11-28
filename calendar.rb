@@ -6,7 +6,7 @@ class Calendar
     end
 
     def weekday_name_today
-        current_datetime_object.strftime('%A')
+        weekday_name_from_date(current_datetime_object)
     end
 
     def weekday_number_today
@@ -18,7 +18,7 @@ class Calendar
     end
 
     def weekday_name_yesterday
-        yesterday_datetime_object.strftime('%A')
+        weekday_name_from_date(yesterday_datetime_object)
     end
 
     def weekday_number_yesterday
@@ -33,5 +33,9 @@ class Calendar
 
     def yesterday_datetime_object
         (current_datetime_object - SECONDS_IN_ONE_DAY)
+    end
+
+    def weekday_name_from_date(datetime_object)
+        datetime_object.strftime('%A')
     end
 end
