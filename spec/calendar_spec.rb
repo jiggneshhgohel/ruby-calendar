@@ -22,5 +22,16 @@ describe Calendar do
         end
     end
 
-    # today's week day number
+    context "#date_yesterday" do
+        it "returns yesterday's date" do
+            calendar = Calendar.new
+            expect(calendar.date_yesterday).to eql( (Time.now - (1 * 60 * 60 * 24 )).day )
+        end
+    end
+
+    context "#next_week_dates" do
+        it "returns an array of dates in next week" do
+            skip
+        end
+    end
 end
