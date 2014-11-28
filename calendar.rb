@@ -32,6 +32,10 @@ class Calendar
         monthday_number(tomorrow_datetime_object)
     end
 
+    def weekday_name_tomorrow
+        weekday_name(tomorrow_datetime_object)
+    end
+
     private
 
     def current_datetime_object
