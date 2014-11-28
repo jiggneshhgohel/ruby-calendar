@@ -8,17 +8,17 @@ describe Calendar do
         end
     end
 
-    context "#week_day_name_today" do
-        it "returns today's week day name" do
+    context "#weekday_name_today" do
+        it "returns today's week-day name" do
             calendar = Calendar.new
-            expect(calendar.week_day_name_today).to eql(Time.now.strftime('%A'))
+            expect(calendar.weekday_name_today).to eql(Time.now.strftime('%A'))
         end
     end
 
-    context "#week_day_number_today" do
-        it "returns today's week day number" do
+    context "#weekday_number_today" do
+        it "returns today's week-day number" do
             calendar = Calendar.new
-            expect(calendar.week_day_number_today).to eql(Time.now.wday)
+            expect(calendar.weekday_number_today).to eql(Time.now.wday)
         end
     end
 
