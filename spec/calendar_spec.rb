@@ -1,9 +1,10 @@
 require_relative '../calendar'
 
 describe Calendar do
-    context "#for_ongoing_month" do
-        it "returns the calendar of ongoing month" do
-            skip "TODO"
+    context "#date_today" do
+        it "returns today's date" do
+            calendar = Calendar.new
+            expect(calendar.date_today).to eql(Time.now.day)
         end
     end
 end
