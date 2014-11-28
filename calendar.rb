@@ -3,28 +3,33 @@ class Calendar
 
     # Today Helpers
     def date_today
-        day_number_in_month_from_date(current_datetime_object)
+        monthday_number(current_datetime_object)
     end
 
     def weekday_name_today
-        weekday_name_from_date(current_datetime_object)
+        weekday_name(current_datetime_object)
     end
 
     def weekday_number_today
-        week_day_number_from_date(current_datetime_object)
+        weekday_number(current_datetime_object)
     end
 
     # Yesterday Helpers
     def date_yesterday
-        day_number_in_month_from_date(yesterday_datetime_object)
+        monthday_number(yesterday_datetime_object)
     end
 
     def weekday_name_yesterday
-        weekday_name_from_date(yesterday_datetime_object)
+        weekday_name(yesterday_datetime_object)
     end
 
     def weekday_number_yesterday
-        week_day_number_from_date(yesterday_datetime_object)
+        weekday_number(yesterday_datetime_object)
+    end
+
+    # Tomorrow Helpers
+    def date_tomorrow
+        monthday_number(tomorrow_datetime_object)
     end
 
     private
@@ -37,15 +42,19 @@ class Calendar
         (current_datetime_object - SECONDS_IN_ONE_DAY)
     end
 
-    def weekday_name_from_date(datetime_object)
+    def tomorrow_datetime_object
+        (current_datetime_object + SECONDS_IN_ONE_DAY)
+    end
+
+    def weekday_name(datetime_object)
         datetime_object.strftime('%A')
     end
 
-    def week_day_number_from_date(datetime_object)
+    def weekday_number(datetime_object)
         datetime_object.wday
     end
 
-    def day_number_in_month_from_date(datetime_object)
+    def monthday_number(datetime_object)
         datetime_object.mday
     end
 end
