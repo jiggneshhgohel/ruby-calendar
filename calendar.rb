@@ -5,11 +5,11 @@ class Calendar
         current_datetime_object.day
     end
 
-    def week_day_name_today
+    def weekday_name_today
         current_datetime_object.strftime('%A')
     end
 
-    def week_day_number_today
+    def weekday_number_today
         current_datetime_object.wday
     end
 
