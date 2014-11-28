@@ -57,6 +57,13 @@ describe Calendar do
         end
     end
 
+    context "#weekday_number_tomorrow" do
+        it "returns tomorrow's week-day number" do
+            calendar = Calendar.new
+            expect(calendar.weekday_number_tomorrow).to eql( (Time.now + Calendar::SECONDS_IN_ONE_DAY).wday )
+        end
+    end
+
     context "#next_week_dates" do
         it "returns an array of dates in next week" do
             skip
