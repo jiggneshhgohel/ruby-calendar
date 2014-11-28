@@ -1,8 +1,9 @@
 class Calendar
     SECONDS_IN_ONE_DAY = (1 * 60 * 60 * 24)
 
+    # Today Helpers
     def date_today
-        current_datetime_object.day
+        day_number_in_month_from_date(current_datetime_object)
     end
 
     def weekday_name_today
@@ -13,8 +14,9 @@ class Calendar
         week_day_number_from_date(current_datetime_object)
     end
 
+    # Yesterday Helpers
     def date_yesterday
-        yesterday_datetime_object.day
+        day_number_in_month_from_date(yesterday_datetime_object)
     end
 
     def weekday_name_yesterday
@@ -41,5 +43,9 @@ class Calendar
 
     def week_day_number_from_date(datetime_object)
         datetime_object.wday
+    end
+
+    def day_number_in_month_from_date(datetime_object)
+        datetime_object.mday
     end
 end
