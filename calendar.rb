@@ -1,4 +1,6 @@
 class Calendar
+    SECONDS_IN_ONE_DAY = (1 * 60 * 60 * 24)
+
     def date_today
         current_datetime_object.day
     end
@@ -12,7 +14,7 @@ class Calendar
     end
 
     def date_yesterday
-        (current_datetime_object - (1 * 60 * 60 * 24)).day
+        (current_datetime_object - SECONDS_IN_ONE_DAY).day
     end
 
     private

@@ -25,7 +25,7 @@ describe Calendar do
     context "#date_yesterday" do
         it "returns yesterday's date" do
             calendar = Calendar.new
-            expect(calendar.date_yesterday).to eql( (Time.now - (1 * 60 * 60 * 24 )).day )
+            expect(calendar.date_yesterday).to eql( (Time.now - Calendar::SECONDS_IN_ONE_DAY).day )
         end
     end
 
