@@ -178,8 +178,8 @@ describe Calendar do
             expect(calendar.month).to eql(Time.now.month)
         end
 
-        it "sets the week to current week-number of year" do
-            expect(calendar.week).to eql(current_week_number_of_current_year)
+        it "sets the week to current week-number of current month" do
+            expect(calendar.week).to eql(current_week_number_of_current_month)
         end
     end
 

@@ -17,7 +17,7 @@ module ClassMethods
 
     def for_current_week
         time = current_time
-        new(time.year, time.month, current_week_number_of_current_year)
+        new(time.year, time.month, current_week_number_of_current_month)
     end
 
     def for_current_month
