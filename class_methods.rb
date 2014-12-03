@@ -55,11 +55,7 @@ module ClassMethods
 
         # Adding 1 for handling the special cases like first week dates
         # whose division by 7 returns 0
-        week_number = (year_day_number / 7) + 1
-        if 0 == (year_day_number % 7)
-            week_number -= 1
-        end
-        week_number
+        (year_day_number / 7) + 1
     end
 
     private

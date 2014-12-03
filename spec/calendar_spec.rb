@@ -12,7 +12,7 @@ require_relative '../calendar'
 
 #   Calendar.for_week(4).show                           # Incorrect.Please set month and year
 #   Calendar.for_month(7).show                          # Incorrect.Please set year or use of_month
-#
+#   Calendar.for_week(3).in_month(7).show               # Incorrect.Please set year
 
 describe Calendar do
     it "does not have class method new" do
@@ -72,6 +72,10 @@ describe Calendar do
 
         it "in_year" do
             expect(Calendar.for_week(2)).to respond_to(:in_year)
+        end
+
+        it "show" do
+            expect(Calendar.for_week(2)).to respond_to(:show)
         end
     end
 
@@ -216,10 +220,6 @@ describe Calendar do
     end
 
     context "#show" do
-        it "responds to instance method show" do
-            expect(Calendar.for_current_week).to respond_to(:show)
-        end
-
         it "raises error when week is found set without month and year" do
             expect { Calendar.for_week(5).show }.to raise_error(/Incorrect API Usage.Required month and year components missing./)
         end
@@ -232,16 +232,32 @@ describe Calendar do
             expect { Calendar.for_month(4).in_year(2011).show }.not_to raise_error
         end
 
+        it "raises error when week and month are found set without year" do
+            expect { Calendar.for_week(2).of_month(4).show }.to raise_error(/Incorrect API Usage.Required year component missing./)
+        end
+
+        it "raises error when given week-number is invalid in context of given month" do
+            expect { Calendar.for_week(7).of_month(3).in_year(2014).show }.to raise_error(/Week-number -?\d+ passed is invalid.It must be between 1 and 5/)
+            expect { Calendar.for_week(0).of_month(3).in_year(2014).show }.to raise_error(/Week-number -?\d+ passed is invalid.It must be between 1 and 5/)
+        end
+
+        it "raises error when given week-number of February month in a normal year, is found greater than 4" do
+            expect { Calendar.for_week(5).of_month(2).in_year(2014).show }.to raise_error(/February \d+ doesn't have week-number \d+/)
+        end
+
+        it "does not raise error when given week-number of February month in a leap year, is found greater than 4" do
+            expect { Calendar.for_week(5).of_month(2).in_year(2012).show }.not_to raise_error
+        end
+
+        it "raises error when given month number is invalid in context of given year" do
+            expect { Calendar.for_month(13).in_year(2014).show }.to raise_error(/Month number -?\d+ passed is invalid.It must be between 1 and 12/)
+            expect { Calendar.for_month(-1).in_year(2012).show }.to raise_error(/Month number -?\d+ passed is invalid.It must be between 1 and 12/)
+        end
+
+
         # TODO: Add more specs
 
-        # TODO: What if the week number passed is invalid in context of of_month value
-        # For e.g. for_week(7).of_month(6)
-        # There cannot be 7 weeks in a month
-
-        # TODO: What if the month number passed is invalid in context of in_year value
-        # For e.g. for_month(13).in_year(2012)
-        # There cannot be 13th month in a year
-        # Similarly there cannot be 0th or negative month in a year
+        # TODO: What if year is passed as a two-digit number?
 
         # http://stackoverflow.com/questions/1489826/how-to-get-the-number-of-days-in-a-given-month-in-ruby-accounting-for-year
         # https://github.com/sachin87/week-of-month/blob/master/lib/modules/day.rb
@@ -250,7 +266,8 @@ describe Calendar do
 
     # SPEC HELPER METHODS
     def current_week_number_of_current_year
-        Time.now.strftime("%W").to_i
+        # The week-numbers are 0-based thus adding 1 to it.
+        Time.now.strftime("%W").to_i + 1
     end
 
     def current_week_number_of_current_month

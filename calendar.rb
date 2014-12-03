@@ -1,4 +1,5 @@
 require_relative "./class_methods"
+require 'date'
 
 class Calendar
     extend ClassMethods
@@ -45,12 +46,36 @@ class Calendar
     private
 
     def validate_object_state
-        if month && !year
-            raise "Incorrect API Usage.Required year component missing."
+        if month
+            if !year
+                raise "Incorrect API Usage.Required year component missing."
+            end
+
+            unless month.between?(1, 12)
+               raise "Month number #{month} passed is invalid.It must be between 1 and 12"
+            end
         end
 
-        if week && !(year && month)
-            raise "Incorrect API Usage.Required month and year components missing."
+        if week
+            if !(year && month)
+                raise "Incorrect API Usage.Required month and year components missing."
+            end
+
+            if week.between?(1, 5)
+                validate_given_week_number_in_february_given_year
+            else
+               raise "Week-number #{week} passed is invalid.It must be between 1 and 5"
+            end
+        end
+    end
+
+    def validate_given_week_number_in_february_given_year
+        if (year && 2 == month)
+            is_given_year_leap = Time.new(year).to_date.leap?
+
+            if !is_given_year_leap && week > 4
+                raise "February #{year} doesn't have week-number #{week}"
+            end
         end
     end
 end
