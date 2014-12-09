@@ -254,6 +254,62 @@ describe Calendar do
             expect { Calendar.for_month(-1).in_year(2012).show }.to raise_error(/Month number -?\d+ passed is invalid.It must be between 1 and 12/)
         end
 
+        context "when invoked on .for_month.in_year" do
+            it "returns a hash mapping week-day to an array of dates falling on the week-day in given month-year combination" do
+                week_days = [ :mon, :tue, :wed, :thu, :fri, :sat, :sun ]
+
+                year_2014 = 2014
+
+                december_month = 12
+                expected_december_month_hash = {
+                    mon: [ 1, 8, 15, 22, 29],
+                    tue: [ 2, 9, 16, 23, 30 ],
+                    wed: [ 3, 10, 17, 24, 31 ],
+                    thu: [ 4, 11, 18, 25 ],
+                    fri: [ 5, 12, 19, 26 ],
+                    sat: [ 6, 13, 20, 27 ],
+                    sun: [ 7, 14, 21, 28 ]
+                }
+
+                actual_december_month_hash = Calendar.for_month(december_month).in_year(year_2014).show
+                week_days.each do |day|
+                    expect(actual_december_month_hash[day]).to eql(expected_december_month_hash[day])
+                end
+
+                november_month = 11
+                expected_november_month_hash = {
+                    mon: [ 3, 10, 17, 24],
+                    tue: [ 4, 11, 18, 25 ],
+                    wed: [ 5, 12, 19, 26 ],
+                    thu: [ 6, 13, 20, 27 ],
+                    fri: [ 7, 14, 21, 28 ],
+                    sat: [ 1, 8, 15, 22, 29 ],
+                    sun: [ 2, 9, 16, 23, 30 ]
+                }
+
+                actual_november_month_hash = Calendar.for_month(november_month).in_year(year_2014).show
+                week_days.each do |day|
+                    expect(actual_november_month_hash[day]).to eql(expected_november_month_hash[day])
+                end
+
+                july_month = 7
+                expected_july_month_hash = {
+                    mon: [ 7, 14, 21, 28],
+                    tue: [ 1, 8, 15, 22, 29 ],
+                    wed: [ 2, 9, 16, 23, 30 ],
+                    thu: [ 3, 10, 17, 24, 31 ],
+                    fri: [ 4, 11, 18, 25 ],
+                    sat: [ 5, 12, 19, 26 ],
+                    sun: [ 6, 13, 20, 27 ]
+                }
+
+                actual_july_month_hash = Calendar.for_month(july_month).in_year(year_2014).show
+                week_days.each do |day|
+                    expect(actual_july_month_hash[day]).to eql(expected_july_month_hash[day])
+                end
+            end
+        end
+
 
         # TODO: Add more specs
 

@@ -58,15 +58,7 @@ module ClassMethods
         (year_day_number / 7) + 1
     end
 
-    private
-
     def current_time
         Time.now
-    end
-
-    # TODO: Expects numeric month number.Later support for downcased abbreviated
-    # month name can be added
-    def number_of_days_in_month(month)
-        MAP_MONTH_NUMBER_TO_MONTH_DETAILS[month.to_s][1]
     end
 end
