@@ -118,11 +118,35 @@ class Calendar
     end
 
     def monthly_calendar
-        time = Time.new(year, month)
+        weekday_dates_grouped_by_weekday_number = group_weekday_dates_by_weekday_number
 
-        date_range = Range.new(1, number_of_days_in_month(month))
+        MAP_WEEKDAY_NUMBER_TO_NAME.inject(Hash.new([])) do |memo_hash, (day_number, day_name)|
+            memo_hash[day_name] = weekday_dates_grouped_by_weekday_number[day_number]
+            memo_hash
+        end
+    end
 
-        # Code-snippet below for a date range of 1..(total_days_in_month)
+    # TODO: Expects numeric month number.Later support for downcased abbreviated
+    # month name can be added
+    def number_of_days_in_month(month)
+        MAP_MONTH_NUMBER_TO_MONTH_DETAILS[month][1]
+    end
+
+    def weekday_numbers_sequence_from_first_date_weekday(first_date_weekday_number)
+        weekday_numbers_arr = []
+        counter = first_date_weekday_number
+        7.times do |index|
+            weekday_numbers_arr << counter
+            counter += 1
+            counter = 0 if counter >= 7
+        end
+        weekday_numbers_arr
+    end
+
+    def group_weekday_dates_by_ideal_weekday_number(start_date, end_date)
+        date_range = Range.new(start_date, end_date)
+
+        # Code-snippet below for a date range of 1..31
         # always returns a hash mapping week-day-number TO
         # an array of dates falling on the week-day. For e.g. for months
         # having 31 days the returned hash would always be following:
@@ -137,40 +161,36 @@ class Calendar
         # }
         # week-day-number (the key in hash) corresponds to day number returned
         # by Time#wday)
-        weekday_dates_grouped_by_calculated_weekday_number = date_range.group_by { |date| date % 7 }
+        date_range.group_by { |date| date % 7 }
+    end
 
-        # However it is not necessary that the first date of month
-        # always falls on Monday (having wday 1).For e.g. in November 2014
-        # 1st date falls on Saturday.Thus the hash returned by
-        # group_by above needs to be adjusted such that the dates in the
+    def group_weekday_dates_by_weekday_number
+        time = Time.new(year, month)
+
+        # A sequence of weekday numbers starting from weekday number of
+        # first date of month.For e.g. for month of Nov 2014
+        # the expected sequence is [6, 0, 1, 2, 3, 4, 5]
+        weekday_numbers_starting_from_first_date_weekday =
+            weekday_numbers_sequence_from_first_date_weekday(time.wday)
+
+        weekday_dates_grouped_by_ideal_weekday_number =
+            group_weekday_dates_by_ideal_weekday_number(1, number_of_days_in_month(month))
+
+        weekday_dates_grouped_by_ideal_weekday_number_arr =
+            weekday_dates_grouped_by_ideal_weekday_number.to_a
+
+        # It is not necessary that the first date of month
+        # always falls on Monday (wday 1).For e.g. in November 2014
+        # 1st date falls on Saturday.Thus the
+        # weekday_dates_grouped_by_ideal_weekday_number
+        # hash above is being adjusted below such that the dates in the
         # month correspond to correct week-day-number
-        weekday_numbers_starting_from_first_date_weekday = []
-        first_date_weekday_number = time.wday
-        counter = first_date_weekday_number = time.wday
-        7.times do |index|
-            weekday_numbers_starting_from_first_date_weekday << counter
-            counter += 1
-            counter = 0 if counter >= 7
-        end
-
-        weekday_dates_grouped_by_calculated_weekday_number_arr = weekday_dates_grouped_by_calculated_weekday_number.to_a
         weekday_dates_grouped_by_actual_weekday_number = {}
         7.times do |index|
             key   = weekday_numbers_starting_from_first_date_weekday[index]
-            value = weekday_dates_grouped_by_calculated_weekday_number_arr[index].last
+            value = weekday_dates_grouped_by_ideal_weekday_number_arr[index].last
             weekday_dates_grouped_by_actual_weekday_number[key] = value
         end
-
-        hash = Hash.new([])
-        MAP_WEEKDAY_NUMBER_TO_NAME.each do |day_number, day_name|
-            hash[day_name] = weekday_dates_grouped_by_actual_weekday_number[day_number]
-        end
-        hash
-    end
-
-    # TODO: Expects numeric month number.Later support for downcased abbreviated
-    # month name can be added
-    def number_of_days_in_month(month)
-        MAP_MONTH_NUMBER_TO_MONTH_DETAILS[month][1]
+        weekday_dates_grouped_by_actual_weekday_number
     end
 end
