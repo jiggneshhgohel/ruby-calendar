@@ -56,6 +56,14 @@ describe Calendar do
             expect(Calendar).to respond_to(:week_number_of_year)
         end
 
+        it "start_date_of_week_number_in_month" do
+            expect(Calendar).to respond_to(:start_date_of_week_number_in_month)
+        end
+
+        it "starting_weekday_of_week_number_in_month" do
+            expect(Calendar).to respond_to(:starting_weekday_of_week_number_in_month)
+        end
+
         it "current_week_number_of_current_year" do
             expect(Calendar).to respond_to(:current_week_number_of_current_year)
         end
@@ -96,6 +104,34 @@ describe Calendar do
             expect(Calendar.week_number_of_year(Time.new(2012, 4, 23))).to eql(17)
             expect(Calendar.week_number_of_year(Time.new(2015, 7, 31))).to eql(31)
             expect(Calendar.week_number_of_year(Time.new(2014, 12, 7))).to eql(49)
+        end
+    end
+
+    context ".start_date_of_week_number_in_month" do
+        it "returns date on which the week, corresponding to the given week-number in a month, starts" do
+            expect(Calendar.start_date_of_week_number_in_month(4)).to eql(22)
+            expect(Calendar.start_date_of_week_number_in_month(1)).to eql(1)
+            expect(Calendar.start_date_of_week_number_in_month(5)).to eql(29)
+        end
+    end
+
+    context ".starting_weekday_of_week_number_in_month" do
+        it "raises error when given week-number is invalid in context of given month" do
+            expect { Calendar.starting_weekday_of_week_number_in_month(2014, 11, 0) }.to raise_error(/Week-number -?\d+ passed is invalid.It must be between 1 and 5/)
+        end
+
+        it "raises error when given week-number of February month in a normal year, is found greater than 4" do
+            expect { Calendar.starting_weekday_of_week_number_in_month(2014, 2, 5) }.to raise_error(/February \d+ doesn't have week-number \d+/)
+        end
+
+        it "does not raise error when given week-number of February month in a leap year, is found greater than 4" do
+            expect { Calendar.starting_weekday_of_week_number_in_month(2012, 2, 5) }.not_to raise_error
+        end
+
+        it "returns weekday name on which the week, corresponding to the given year-month-week_number combination, starts" do
+            expect(Calendar.starting_weekday_of_week_number_in_month(2014, 11, 4)).to eql(:sat)
+            expect(Calendar.starting_weekday_of_week_number_in_month(2014, 8, 2)).to eql(:fri)
+            expect(Calendar.starting_weekday_of_week_number_in_month(2014, 6, 1)).to eql(:sun)
         end
     end
 
@@ -256,8 +292,6 @@ describe Calendar do
 
         context "when invoked on .for_month.in_year" do
             it "returns a hash mapping week-day to an array of dates falling on the week-day in given month-year combination" do
-                week_days = [ :mon, :tue, :wed, :thu, :fri, :sat, :sun ]
-
                 year_2014 = 2014
 
                 december_month = 12
@@ -310,6 +344,37 @@ describe Calendar do
             end
         end
 
+        context "when invoked on .for_week.of_month.in_year" do
+            it "returns a hash mapping week-day to date falling on the week-day in given week-month-year combination" do
+                skip
+                <<-COMMENT
+                year = 2014
+
+                november_month = 11
+                november_week = 4
+
+                expected_november_4th_week_hash = {
+                    sat: 22,
+                    sun: 23,
+                    mon: 24,
+                    tue: 25,
+                    wed: 26,
+                    thu: 27,
+                    fri: 28
+                }
+
+                actual_november_4th_week_hash = Calendar.for_week(november_week)
+                                                        .of_month(november_month)
+                                                        .in_year(year)
+                                                        .show
+
+                week_days.each do |day|
+                    expect(actual_november_4th_week_hash[day]).to eql(expected_november_4th_week_hash[day])
+                end
+                COMMENT
+            end
+        end
+
 
         # TODO: Add more specs
 
@@ -339,5 +404,9 @@ describe Calendar do
         else
             5
         end
+    end
+
+    def week_days
+        [ :mon, :tue, :wed, :thu, :fri, :sat, :sun ]
     end
 end

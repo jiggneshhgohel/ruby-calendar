@@ -2,8 +2,6 @@ require_relative "./class_methods"
 require_relative "./calendar_constants"
 require_relative "./monthly_calendar"
 
-require 'date'
-
 class Calendar
     extend ClassMethods
 
@@ -74,13 +72,7 @@ class Calendar
     end
 
     def validate_given_week_number_in_february_given_year
-        if (year && 2 == month)
-            is_given_year_leap = Time.new(year).to_date.leap?
-
-            if !is_given_year_leap && week > 4
-                raise "February #{year} doesn't have week-number #{week}"
-            end
-        end
+        self.class.validate_given_week_number_in_february_given_year(year, month, week)
     end
 
     def set_view_type
