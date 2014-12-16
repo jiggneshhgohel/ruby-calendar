@@ -23,4 +23,14 @@ module CalendarConstants
         6 => :sat,
         0 => :sun
     }
+
+    MAP_GAP_IN_DAYS_BETWEEN_MONDAY_AND_OTHER_WEEKDAYS = {
+        1 => 0, # key represents monday
+        2 => 1, # key represents tuesday
+        3 => 2, # key represents wednesday
+        4 => 3, # key represents thursday
+        5 => 4, # key represents friday
+        6 => 5, # key represents saturday
+        0 => 6  # key represents sunday
+    }
 end

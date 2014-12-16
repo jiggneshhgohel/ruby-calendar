@@ -57,14 +57,51 @@ module ClassMethods
         week_number
     end
 
+    def date_on_first_monday_of_year(received_year)
+        received_year_time = Time.new(received_year)
+        received_year_first_date_weekday = received_year_time.wday
+
+        received_year_first_monday_date = received_year_time.day
+        gap_in_days = MAP_GAP_IN_DAYS_BETWEEN_MONDAY_AND_OTHER_WEEKDAYS[received_year_first_date_weekday]
+        if gap_in_days > 0
+            calculated_monday_time = received_year_time - (60 * 60 * 24 * gap_in_days)
+
+            if calculated_monday_time.year < received_year
+                received_year_first_monday_time = calculated_monday_time + (60 * 60 * 24 * 7)
+                received_year_first_monday_date = received_year_first_monday_time.day
+            end
+        end
+
+        received_year_first_monday_date
+    end
+
+    # Note: This method relies on the fact that Week starts on Monday and
+    # ends on Sunday. The results returned by it are to be verified
+    # by the value returned by following code: Time#strftime("%W").to_i + 1
+    # Note: Time#strftime("%W") returns a 0-based string value. For e.g
+    # 1st week of the month is returned as "00".
     def week_number_of_year(time=Time.now)
         raise "Time instance required!" unless time.is_a? Time
 
+        first_monday_date = date_on_first_monday_of_year(time.year)
+
         year_day_number = time.yday
 
-        # Adding 1 for handling the special cases like first week dates
-        # whose division by 7 returns 0
-        (year_day_number / 7) + 1
+        if year_day_number <= 7
+            week_number = 1
+
+            if year_day_number > 1 && year_day_number.between?(first_monday_date, first_monday_date + 6)
+                week_number += 1
+            end
+
+            return week_number
+        end
+
+        week_number = (year_day_number - first_monday_date) / 7
+        week_number += 1 # as result is 0-based
+        week_number += 1 if first_monday_date != 1 # Add one more week because 1st monday doesn't fall on 1st date.
+
+        week_number
     end
 
     def start_date_of_week_number_in_month(week_number)
