@@ -14,6 +14,9 @@ require_relative '../calendar'
 #   Calendar.for_month(7).show                          # Incorrect.Please set year or use of_month
 #   Calendar.for_week(3).in_month(7).show               # Incorrect.Please set year
 
+#   Calendar.ideal_first_date_of_week_number(4)
+#   Calendar.first_weekday_number_and_date_of_week_number_of_month_in_year(2014, 10, 3)
+
 describe Calendar do
     it "does not have class method new" do
         expect(Calendar).not_to respond_to(:new)
@@ -60,12 +63,12 @@ describe Calendar do
             expect(Calendar).to respond_to(:week_number_of_year)
         end
 
-        it "start_date_of_week_number_in_month" do
-            expect(Calendar).to respond_to(:start_date_of_week_number_in_month)
+        it "ideal_first_date_of_week_number" do
+            expect(Calendar).to respond_to(:ideal_first_date_of_week_number)
         end
 
-        it "starting_weekday_of_week_number_in_month" do
-            expect(Calendar).to respond_to(:starting_weekday_of_week_number_in_month)
+        it "first_weekday_number_and_date_of_week_number_of_month_in_year" do
+            expect(Calendar).to respond_to(:first_weekday_number_and_date_of_week_number_of_month_in_year)
         end
 
         it "current_week_number_of_current_year" do
@@ -122,7 +125,7 @@ describe Calendar do
 
     context ".week_number_of_year" do
         it "returns the week-number of year in which given date lies" do
-            # Week starts on Monday and ends on Sunday
+            # Note: Week starts on Monday and ends on Sunday
 
             # ============== Dates between 1 and 7
             # 1st week examples
@@ -175,8 +178,7 @@ describe Calendar do
             expect(Calendar.week_number_of_year(Time.new(2011, 2, 8))).to eql(7)
 
             # 18th week examples
-            # TODO: Lets check it later. Below is a leap year example
-            # expect(Calendar.week_number_of_year(Time.new(2012, 4, 23))).to eql(18)
+            expect(Calendar.week_number_of_year(Time.new(2012, 4, 23))).to eql(18)
 
             # 31st week examples
             expect(Calendar.week_number_of_year(Time.new(2014, 7, 31))).to eql(31)
@@ -185,43 +187,59 @@ describe Calendar do
             # 49th week examples
             expect(Calendar.week_number_of_year(Time.new(2014, 12, 7))).to eql(49)
 
-            # TODO Add more examples to check the correctness of implementation
+            # 50th week examples
+            expect(Calendar.week_number_of_year(Time.new(2012, 12, 8))).to eql(50)
+
+            # 51st week examples
+            expect(Calendar.week_number_of_year(Time.new(2012, 12, 10))).to eql(51)
+            expect(Calendar.week_number_of_year(Time.new(2014, 12, 17))).to eql(51)
+
+            # 52nd week examples
+            expect(Calendar.week_number_of_year(Time.new(2013, 12, 25))).to eql(52)
+            expect(Calendar.week_number_of_year(Time.new(2014, 12, 22))).to eql(52)
+
+            # 53rd week examples
+            expect(Calendar.week_number_of_year(Time.new(2013, 12, 30))).to eql(53)
+
+            expect(Calendar.week_number_of_year(Time.new(2014, 12, 29))).to eql(53)
+            expect(Calendar.week_number_of_year(Time.new(2014, 12, 31))).to eql(53)
+
+            # 54th week examples
+            expect(Calendar.week_number_of_year(Time.new(2012, 12, 31))).to eql(54)
         end
     end
 
-    context ".start_date_of_week_number_in_month" do
+    context ".ideal_first_date_of_week_number" do
         it "returns date on which the week, corresponding to the given week-number in a month, starts" do
-            expect(Calendar.start_date_of_week_number_in_month(4)).to eql(22)
-            expect(Calendar.start_date_of_week_number_in_month(1)).to eql(1)
-            expect(Calendar.start_date_of_week_number_in_month(5)).to eql(29)
+            expect(Calendar.ideal_first_date_of_week_number(4)).to eql(22)
+            expect(Calendar.ideal_first_date_of_week_number(1)).to eql(1)
+            expect(Calendar.ideal_first_date_of_week_number(5)).to eql(29)
         end
     end
 
-    context ".starting_weekday_of_week_number_in_month" do
+    context ".first_weekday_number_and_date_of_week_number_of_month_in_year" do
         it "raises error when given week-number is invalid in context of given month" do
-            expect { Calendar.starting_weekday_of_week_number_in_month(2014, 11, 0) }.to raise_error(/Week-number -?\d+ passed is invalid.It must be between 1 and 5/)
+            expect { Calendar.first_weekday_number_and_date_of_week_number_of_month_in_year(2014, 11, 0) }.to raise_error(/Week-number -?\d+ passed is invalid.It must be between 1 and 5/)
         end
 
         it "raises error when given week-number of February month in a normal year, is found greater than 4" do
-            expect { Calendar.starting_weekday_of_week_number_in_month(2014, 2, 5) }.to raise_error(/February \d+ doesn't have week-number \d+/)
+            expect { Calendar.first_weekday_number_and_date_of_week_number_of_month_in_year(2014, 2, 5) }.to raise_error(/February \d+ doesn't have week-number \d+/)
         end
 
         it "does not raise error when given week-number of February month in a leap year, is found greater than 4" do
-            expect { Calendar.starting_weekday_of_week_number_in_month(2012, 2, 5) }.not_to raise_error
+            expect { Calendar.first_weekday_number_and_date_of_week_number_of_month_in_year(2012, 2, 5) }.not_to raise_error
         end
 
-        it "returns weekday name on which the week, corresponding to the given year-month-week_number combination, starts" do
-            expect(Calendar.starting_weekday_of_week_number_in_month(2014, 11, 4)).to eql(:sat)
-            expect(Calendar.starting_weekday_of_week_number_in_month(2014, 8, 2)).to eql(:fri)
-            expect(Calendar.starting_weekday_of_week_number_in_month(2014, 6, 1)).to eql(:sun)
+        it "returns weekday number on which the week, corresponding to the given year-month-week_number combination, starts" do
+            expect(Calendar.first_weekday_number_and_date_of_week_number_of_month_in_year(2014, 11, 4)).to eql({ 6 => 22 }.to_a.flatten)
+            expect(Calendar.first_weekday_number_and_date_of_week_number_of_month_in_year(2014, 8, 2)).to eql({ 5 => 8 }.to_a.flatten)
+            expect(Calendar.first_weekday_number_and_date_of_week_number_of_month_in_year(2014, 6, 1)).to eql({ 0 => 1}.to_a.flatten)
         end
     end
 
     context ".current_week_number_of_current_year" do
         it "returns the ongoing week-number of the current year" do
-            # TODO
-            skip "TODO"
-            #expect(Calendar.current_week_number_of_current_year).to eql(current_week_number_of_current_year)
+            expect(Calendar.current_week_number_of_current_year).to eql(current_week_number_of_current_year)
         end
     end
 
@@ -375,7 +393,7 @@ describe Calendar do
         end
 
         context "when invoked on .for_month.in_year" do
-            it "returns a hash mapping week-day to an array of dates falling on the week-day in given month-year combination" do
+            it "returns a hash mapping week-days to an array of dates, falling on the week-days, in given month-year combination" do
                 year_2014 = 2014
 
                 december_month = 12
@@ -394,6 +412,8 @@ describe Calendar do
                     expect(actual_december_month_hash[day]).to eql(expected_december_month_hash[day])
                 end
 
+                #=================
+
                 november_month = 11
                 expected_november_month_hash = {
                     mon: [ 3, 10, 17, 24],
@@ -409,6 +429,8 @@ describe Calendar do
                 week_days.each do |day|
                     expect(actual_november_month_hash[day]).to eql(expected_november_month_hash[day])
                 end
+
+                #=================
 
                 july_month = 7
                 expected_july_month_hash = {
@@ -429,15 +451,12 @@ describe Calendar do
         end
 
         context "when invoked on .for_week.of_month.in_year" do
-            it "returns a hash mapping week-day to date falling on the week-day in given week-month-year combination" do
-                skip
-                <<-COMMENT
-                year = 2014
+            it "returns a hash mapping week-days to date, falling on the week-days, in given week-month-year combination" do
+                year_2014 = 2014
 
                 november_month = 11
                 november_week = 4
-
-                expected_november_4th_week_hash = {
+                expected_november_2014_4th_week_hash = {
                     sat: 22,
                     sun: 23,
                     mon: 24,
@@ -447,15 +466,58 @@ describe Calendar do
                     fri: 28
                 }
 
-                actual_november_4th_week_hash = Calendar.for_week(november_week)
+                actual_november_2014_4th_week_hash = Calendar.for_week(november_week)
                                                         .of_month(november_month)
-                                                        .in_year(year)
+                                                        .in_year(year_2014)
                                                         .show
-
                 week_days.each do |day|
-                    expect(actual_november_4th_week_hash[day]).to eql(expected_november_4th_week_hash[day])
+                    expect(actual_november_2014_4th_week_hash[day]).to eql(expected_november_2014_4th_week_hash[day])
                 end
-                COMMENT
+
+                #=================
+
+                may_month = 5
+                may_week = 2
+                expected_may_2014_2nd_week_hash = {
+                    thu: 8,
+                    fri: 9,
+                    sat: 10,
+                    sun: 11,
+                    mon: 12,
+                    tue: 13,
+                    wed: 14
+                }
+
+                actual_may_2014_2nd_week_hash = Calendar.for_week(may_week)
+                                                   .of_month(may_month)
+                                                   .in_year(year_2014)
+                                                   .show
+                week_days.each do |day|
+                    expect(actual_may_2014_2nd_week_hash[day]).to eql(expected_may_2014_2nd_week_hash[day])
+                end
+
+                #=================
+
+                year_2012 = 2012
+                march_month = 3
+                march_week = 1
+                expected_march_2012_1st_week_hash = {
+                    thu: 1,
+                    fri: 2,
+                    sat: 3,
+                    sun: 4,
+                    mon: 5,
+                    tue: 6,
+                    wed: 7
+                }
+
+                actual_march_2012_1st_week_hash = Calendar.for_week(march_week)
+                                                          .of_month(march_month)
+                                                          .in_year(year_2012)
+                                                          .show
+                week_days.each do |day|
+                    expect(actual_march_2012_1st_week_hash[day]).to eql(expected_march_2012_1st_week_hash[day])
+                end
             end
         end
 

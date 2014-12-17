@@ -104,7 +104,11 @@ module ClassMethods
         week_number
     end
 
-    def start_date_of_week_number_in_month(week_number)
+    # Returns ideal first date of week-number, considering week always
+    # start at 1st of the month and ends on the subsequent 7th day.
+    # For e.g. for Week 1 the first date returned would be 1
+    # Similarly for Week 2 the first date returned would be 8, etc
+    def ideal_first_date_of_week_number(week_number)
         # TODO: Handle exception cases like week_number is less than 0
         # or greater than 5
 
@@ -114,16 +118,23 @@ module ClassMethods
         (7 * (week_number - 1)) + 1
     end
 
-    def starting_weekday_of_week_number_in_month(year, month, week_number)
+    # Returns an array wherein
+    #   index 0 holds the weekday number(0 representing Sunday and 6 representing Saturday)
+    #   index 1 holds the weekday date
+    # of the first date of given week_number in given year-month
+    # combination.
+    # For e.g. for Week 4 of Nov 2014 it should return
+    # [6, 22]
+    def first_weekday_number_and_date_of_week_number_of_month_in_year(year, month, week_number)
         if week_number.between?(1, 5)
             validate_given_week_number_in_february_given_year(year, month, week_number)
         else
            raise "Week-number #{week_number} passed is invalid.It must be between 1 and 5"
         end
 
-        starting_date_of_week = start_date_of_week_number_in_month(week_number)
-        weekday_number = Time.new(year, month, starting_date_of_week).wday
-        MAP_WEEKDAY_NUMBER_TO_NAME[weekday_number]
+        first_date_of_week = ideal_first_date_of_week_number(week_number)
+        weekday_number = Time.new(year, month, first_date_of_week).wday
+        [weekday_number, first_date_of_week]
     end
 
     def current_time
