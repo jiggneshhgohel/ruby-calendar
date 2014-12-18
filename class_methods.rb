@@ -109,8 +109,9 @@ module ClassMethods
     # For e.g. for Week 1 the first date returned would be 1
     # Similarly for Week 2 the first date returned would be 8, etc
     def ideal_first_date_of_week_number(week_number)
-        # TODO: Handle exception cases like week_number is less than 0
-        # or greater than 5
+        unless week_number.between?(1, 5)
+            raise "Week-number #{week_number} passed is invalid.It must be between 1 and 5"
+        end
 
         # If week-number is 4 then 7 * 4 = 28 which is the last date
         # in 4th week. Thus using previous week-number to calculate the

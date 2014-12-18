@@ -210,6 +210,14 @@ describe Calendar do
     end
 
     context ".ideal_first_date_of_week_number" do
+        it "raises error when given week-number is less than 1" do
+            expect { Calendar.ideal_first_date_of_week_number(0) }.to raise_error(/Week-number -?\d+ passed is invalid.It must be between 1 and 5/)
+        end
+
+        it "raises error when given week-number is greater than 5" do
+            expect { Calendar.ideal_first_date_of_week_number(6) }.to raise_error(/Week-number -?\d+ passed is invalid.It must be between 1 and 5/)
+        end
+
         it "returns date on which the week, corresponding to the given week-number in a month, starts" do
             expect(Calendar.ideal_first_date_of_week_number(4)).to eql(22)
             expect(Calendar.ideal_first_date_of_week_number(1)).to eql(1)
