@@ -1,44 +1,96 @@
-require_relative "calendar_helper"
+require_relative "./class_methods"
+require_relative "./calendar_constants"
+require_relative "./monthly_calendar"
+require_relative "./weekly_calendar"
 
 class Calendar
-    include CalendarHelper
+    extend ClassMethods
 
-    # Today Helpers
-    def date_today
-        monthday_number(current_datetime_object)
+    include CalendarConstants
+
+    private_class_method :new
+
+    attr_reader :year, :month, :week, :view_type
+
+    def initialize(year, month=nil, week=nil)
+        @year = year
+        @month = month
+        @week = week
+        @view_type = nil
     end
 
-    def weekday_name_today
-        weekday_name(current_datetime_object)
+    def in_year(year)
+        @year = year
+        self
     end
 
-    def weekday_number_today
-        weekday_number(current_datetime_object)
+    def of_month(month)
+        @month = month
+        self
     end
 
-    # Yesterday Helpers
-    def date_yesterday
-        monthday_number(yesterday_datetime_object)
+    def show
+        validate_object_state
+
+        set_view_type
+
+        case view_type
+            when :weekly
+                weekly_calendar
+            when :monthly
+                monthly_calendar
+            when :yearly
+                yearly_calendar
+            else
+                {}
+        end
     end
 
-    def weekday_name_yesterday
-        weekday_name(yesterday_datetime_object)
+    private
+
+    def validate_object_state
+        if month
+            if !year
+                raise "Incorrect API Usage.Required year component missing."
+            end
+
+            unless month.between?(1, 12)
+               raise "Month number #{month} passed is invalid.It must be between 1 and 12"
+            end
+        end
+
+        if week
+            if !(year && month)
+                raise "Incorrect API Usage.Required month and year components missing."
+            end
+
+            if week.between?(1, 5)
+                validate_given_week_number_in_february_given_year
+            else
+               raise "Week-number #{week} passed is invalid.It must be between 1 and 5"
+            end
+        end
     end
 
-    def weekday_number_yesterday
-        weekday_number(yesterday_datetime_object)
+    def validate_given_week_number_in_february_given_year
+        self.class.validate_given_week_number_in_february_given_year(year, month, week)
     end
 
-    # Tomorrow Helpers
-    def date_tomorrow
-        monthday_number(tomorrow_datetime_object)
+    def set_view_type
+        if year
+            if month
+                @view_type = (week ? :weekly : :monthly)
+            else
+                @view_type = :yearly
+            end
+        end
     end
 
-    def weekday_name_tomorrow
-        weekday_name(tomorrow_datetime_object)
+    def weekly_calendar
+        WeeklyCalendar.new(week, month, year).generate
     end
 
-    def weekday_number_tomorrow
-        weekday_number(tomorrow_datetime_object)
+    def monthly_calendar
+        MonthlyCalendar.new(month, year).generate
     end
 end
